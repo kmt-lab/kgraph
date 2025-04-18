@@ -1,6 +1,12 @@
 #ifndef WDONG_KGRAPH_DATA
 #define WDONG_KGRAPH_DATA
 
+#ifdef KGRAPH_USE_ARM_IMPL
+// Use the ARM-specific implementation
+#include "kgraph-data-arm.h"
+#else
+// Use the original SIMD-based implementation
+
 #include <cmath>
 #include <cstring>
 #include <malloc.h>
@@ -39,6 +45,15 @@ namespace kgraph {
             template <typename T>
             /// L2 square distance.
             static T apply (T const *t1, T const *t2, unsigned size) {
+#ifdef __NVCOMPILER
+                // Fallback implementation for NVIDIA compiler
+                T sum = 0;
+                for (unsigned i = 0; i < size; ++i) {
+                    T diff = t1[i] - t2[i];
+                    sum += diff * diff;
+                }
+                return sum;
+#else
                 using b_type = xsimd::batch<T, xsimd_arch>;
                 unsigned constexpr inc = b_type::size;
                 unsigned vec_size = size - size % inc;
@@ -58,6 +73,7 @@ namespace kgraph {
                     acc += a * a;
                 }
                 return acc;
+#endif
             }
 
             /// inner product.
@@ -365,6 +381,10 @@ namespace kgraph {
 
 
 }
+
+// Original implementation here...
+// [Rest of your original file]
+#endif // KGRAPH_USE_ARM_IMPL
 
 #endif
 
