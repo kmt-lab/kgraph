@@ -25,10 +25,8 @@ and Angular distances on rows of NumPy matrices.
 KGraph depends on a recent version of GCC with C++11 support, cmake
 and the Boost library.  The package can be built and installed with
 ```sh
-cmake -DCMAKE_BUILD_TYPE=release .
-cmake -DCMAKE_BUILD_TYPE=release -B build -S .
+bash build_arm.sh
 cd build
-cmake --build .
 make install
 ```
 
