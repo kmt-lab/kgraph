@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 2.9)
 project (KGRAPH)
 
-option(CMAKE_INSTALL_PREFIX $ENV{HOME}/opt/kgraph)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
