@@ -1,6 +1,8 @@
 KGraph: A Library for Approximate Nearest Neighbor Search
 =========================================================
 
+Forked for use with NVIDIA Grace CPU.
+
 # Introduction
 
 KGraph is a library for k-nearest neighbor (k-NN) graph construction and
@@ -24,8 +26,10 @@ KGraph depends on a recent version of GCC with C++11 support, cmake
 and the Boost library.  The package can be built and installed with
 ```sh
 cmake -DCMAKE_BUILD_TYPE=release .
-make
-sudo make install
+cmake -DCMAKE_BUILD_TYPE=release -B build -S .
+cd build
+cmake --build .
+make install
 ```
 
 A Makefile.plain is also provided in case cmake is not available.
