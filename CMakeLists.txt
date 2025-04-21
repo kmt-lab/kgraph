@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.9)
+cmake_minimum_required (VERSION 3.25)
 project (KGRAPH)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -9,6 +9,10 @@ if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64|arm64")
     message(STATUS "Building for ARM architecture")
     add_definitions(-DKGRAPH_USE_ARM_IMPL)
 endif()
+
+# Enable deprecated features in Boost.Timer
+# Note: This is temporarily needed for backward compatibility and may be removed in future
+add_definitions(-DBOOST_TIMER_ENABLE_DEPRECATED)
 
 # Set OpenMP flags manually for NVHPC compiler
 if(CMAKE_CXX_COMPILER_ID MATCHES "NVHPC")
