@@ -23,9 +23,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "NVHPC")
     ## Add SVE support with a fixed vector length (choose appropriate size)
     #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msve-vector-bits=512")
     # Add OpenMP support
-    set(OpenMP_CXX_FLAGS "-mp")
-    set(OpenMP_CXX_LIB_NAMES "gomp")
-    set(OpenMP_gomp_LIBRARY gomp)
+    # Commented out to avoid randomness in the output
+    #set(OpenMP_CXX_FLAGS "-mp")
+    #set(OpenMP_CXX_LIB_NAMES "gomp")
+    #set(OpenMP_gomp_LIBRARY gomp)
 else()
     # GCC/Clang compiler flags
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O3 -fPIC")
