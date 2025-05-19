@@ -870,7 +870,9 @@ namespace kgraph {
                 auto &rnn_new = nhoods[i].rnn_new;
                 auto &rnn_old = nhoods[i].rnn_old;
                 if (params.R && (rnn_new.size() > params.R)) {
-                    random_shuffle(rnn_new.begin(), rnn_new.end());
+                    //random_shuffle(rnn_new.begin(), rnn_new.end());
+                    static thread_local mt19937 shuffle_rng(params.seed);
+                    shuffle(rnn_new.begin(), rnn_new.end(), shuffle_rng);
                     rnn_new.resize(params.R);
                 }
                 nn_new.insert(nn_new.end(), rnn_new.begin(), rnn_new.end());
