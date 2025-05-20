@@ -786,10 +786,10 @@ namespace kgraph {
                 nhood.pool.resize(params.L+1);
                 nhood.radius = numeric_limits<float>::max();
             }
-#pragma omp parallel
+//#pragma omp parallel
             {
                 vector<unsigned> random(params.S + 1);
-#pragma omp for schedule(static)
+//#pragma omp for schedule(static)
                 for (unsigned n = 0; n < N; ++n) {
                     int thread_id = 0;
 #ifdef _OPENMP
