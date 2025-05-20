@@ -793,7 +793,7 @@ namespace kgraph {
                 thread_id = omp_get_thread_num();
 #endif
                 vector<unsigned> random(params.S + 1);
-#pragma omp for
+#pragma omp for schedule(static)
                 for (unsigned n = 0; n < N; ++n) {
                     auto &nhood = nhoods[n];
                     Neighbors &pool = nhood.pool;
@@ -858,7 +858,7 @@ namespace kgraph {
                 BOOST_VERIFY(nhood.M > 0);
                 nhood.radiusM = nhood.pool[nhood.M-1].dist;
             }
-#pragma omp parallel for
+#pragma omp parallel for schedule(static)
             for (unsigned n = 0; n < N; ++n) {
                 auto &nhood = nhoods[n];
                 auto &nn_new = nhood.nn_new;
