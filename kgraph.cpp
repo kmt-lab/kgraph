@@ -259,7 +259,9 @@ namespace kgraph {
             for (unsigned &v: index) {
                 v = i++;
             }
-            random_shuffle(index.begin(), index.end());
+            //random_shuffle(index.begin(), index.end());
+            static mt19937 rng(default_seed+1);
+            shuffle(index.begin(), index.end(), rng);
 #pragma omp parallel for
             for (unsigned i = 0; i < C; ++i) {
                 controls[i].id = index[i];
@@ -757,6 +759,11 @@ namespace kgraph {
         vector<Nhood> nhoods;
         size_t n_comps;
 
+        bool is_rngs_initialized = false;
+        vector<unsigned> thread_seeds;
+        mt19937 master_rng;
+        vector<mt19937> rngs;
+
         void init () {
             unsigned N = oracle.size();
             unsigned max_threads = 1;
@@ -764,12 +771,15 @@ namespace kgraph {
             max_threads = omp_get_max_threads();
 #endif
             unsigned seed = params.seed;
-            vector<unsigned> thread_seeds(max_threads);
-            mt19937 master_rng(seed);
-            vector<mt19937> rngs(max_threads);
-            for (unsigned i = 0; i < max_threads; ++i) {
-                thread_seeds[i] = master_rng();
-                rngs[i] = mt19937(thread_seeds[i]);
+            if (!is_rngs_initialized) {
+                is_rngs_initialized = true;
+                master_rng = mt19937(seed);
+                thread_seeds.resize(max_threads);
+                rngs.resize(max_threads);
+                for (unsigned i = 0; i < max_threads; ++i) {
+                    thread_seeds[i] = master_rng();
+                    rngs[i] = mt19937(thread_seeds[i]);
+                }
             }
             for (auto &nhood: nhoods) {
                 nhood.nn_new.resize(params.S * 2);
@@ -873,22 +883,24 @@ namespace kgraph {
                     }
                 }
             }
+            int thread_id = 0;
+#ifdef _OPENMP
+                thread_id = omp_get_thread_num();
+#endif
             for (unsigned i = 0; i < N; ++i) {
                 auto &nn_new = nhoods[i].nn_new;
                 auto &nn_old = nhoods[i].nn_old;
                 auto &rnn_new = nhoods[i].rnn_new;
                 auto &rnn_old = nhoods[i].rnn_old;
-                static thread_local mt19937 shuffle_rng(params.seed+1);
                 if (params.R && (rnn_new.size() > params.R)) {
                     //random_shuffle(rnn_new.begin(), rnn_new.end());
-                    shuffle(rnn_new.begin(), rnn_new.end(), shuffle_rng);
+                    shuffle(rnn_new.begin(), rnn_new.end(), rngs[thread_id]);
                     rnn_new.resize(params.R);
                 }
                 nn_new.insert(nn_new.end(), rnn_new.begin(), rnn_new.end());
                 if (params.R && (rnn_old.size() > params.R)) {
                     //random_shuffle(rnn_old.begin(), rnn_old.end());
-                    shuffle(rnn_old.begin(), rnn_old.end(), shuffle_rng);
-                    rnn_new.resize(params.R);
+                    shuffle(rnn_old.begin(), rnn_old.end(), rngs[thread_id]);
                     rnn_old.resize(params.R);
                 }
                 nn_old.insert(nn_old.end(), rnn_old.begin(), rnn_old.end());
