@@ -815,7 +815,8 @@ namespace kgraph {
         }
         void join () {
             size_t cc = 0;
-#pragma omp parallel for default(shared) schedule(dynamic, 100) reduction(+:cc)
+// 2025.05.20 Commented out for deterministic behavior
+//#pragma omp parallel for default(shared) schedule(dynamic, 100) reduction(+:cc)
             for (unsigned n = 0; n < oracle.size(); ++n) {
                 size_t uu = 0;
                 nhoods[n].found = false;
@@ -883,11 +884,12 @@ namespace kgraph {
                     }
                 }
             }
-            int thread_id = 0;
+
+            for (unsigned i = 0; i < N; ++i) {
+                int thread_id = 0;
 #ifdef _OPENMP
                 thread_id = omp_get_thread_num();
 #endif
-            for (unsigned i = 0; i < N; ++i) {
                 auto &nn_new = nhoods[i].nn_new;
                 auto &nn_old = nhoods[i].nn_old;
                 auto &rnn_new = nhoods[i].rnn_new;
