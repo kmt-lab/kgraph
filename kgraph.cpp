@@ -262,7 +262,7 @@ namespace kgraph {
             //random_shuffle(index.begin(), index.end());
             static mt19937 rng(default_seed+1);
             shuffle(index.begin(), index.end(), rng);
-#pragma omp parallel for
+//#pragma omp parallel for
             for (unsigned i = 0; i < C; ++i) {
                 controls[i].id = index[i];
                 LinearSearch(oracle, index[i], K, &controls[i].neighbors);
