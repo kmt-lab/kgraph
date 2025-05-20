@@ -788,13 +788,13 @@ namespace kgraph {
             }
 #pragma omp parallel
             {
-                int thread_id = 0;
-#ifdef _OPENMP
-                thread_id = omp_get_thread_num();
-#endif
                 vector<unsigned> random(params.S + 1);
 #pragma omp for schedule(static)
                 for (unsigned n = 0; n < N; ++n) {
+                    int thread_id = 0;
+#ifdef _OPENMP
+                    thread_id = omp_get_thread_num();
+#endif
                     auto &nhood = nhoods[n];
                     Neighbors &pool = nhood.pool;
                     GenRandom(rngs[thread_id], &nhood.nn_new[0], nhood.nn_new.size(), N);
@@ -888,23 +888,19 @@ namespace kgraph {
             }
 
             for (unsigned i = 0; i < N; ++i) {
-                int thread_id = 0;
-#ifdef _OPENMP
-                thread_id = omp_get_thread_num();
-#endif
                 auto &nn_new = nhoods[i].nn_new;
                 auto &nn_old = nhoods[i].nn_old;
                 auto &rnn_new = nhoods[i].rnn_new;
                 auto &rnn_old = nhoods[i].rnn_old;
                 if (params.R && (rnn_new.size() > params.R)) {
                     //random_shuffle(rnn_new.begin(), rnn_new.end());
-                    shuffle(rnn_new.begin(), rnn_new.end(), rngs[thread_id]);
+                    shuffle(rnn_new.begin(), rnn_new.end(), rngs[0]);
                     rnn_new.resize(params.R);
                 }
                 nn_new.insert(nn_new.end(), rnn_new.begin(), rnn_new.end());
                 if (params.R && (rnn_old.size() > params.R)) {
                     //random_shuffle(rnn_old.begin(), rnn_old.end());
-                    shuffle(rnn_old.begin(), rnn_old.end(), rngs[thread_id]);
+                    shuffle(rnn_old.begin(), rnn_old.end(), rngs[0]);
                     rnn_old.resize(params.R);
                 }
                 nn_old.insert(nn_old.end(), rnn_old.begin(), rnn_old.end());
