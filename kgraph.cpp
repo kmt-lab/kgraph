@@ -759,8 +759,18 @@ namespace kgraph {
 
         void init () {
             unsigned N = oracle.size();
+            unsigned max_threads = 1;
+#ifdef _OPENMP
+            max_threads = omp_get_max_threads();
+#endif
             unsigned seed = params.seed;
-            mt19937 rng(seed);
+            vector<unsigned> thread_seeds(max_threads);
+            mt19937 master_rng(seed);
+            vector<mt19937> rngs(max_threads);
+            for (unsigned i = 0; i < max_threads; ++i) {
+                thread_seeds[i] = master_rng();
+                rngs[i] = mt19937(thread_seeds[i]);
+            }
             for (auto &nhood: nhoods) {
                 nhood.nn_new.resize(params.S * 2);
                 nhood.pool.resize(params.L+1);
@@ -768,18 +778,17 @@ namespace kgraph {
             }
 #pragma omp parallel
             {
+                int thread_id = 0;
 #ifdef _OPENMP
-                mt19937 rng(seed ^ omp_get_thread_num());
-#else
-                mt19937 rng(seed);
+                thread_id = omp_get_thread_num();
 #endif
                 vector<unsigned> random(params.S + 1);
 #pragma omp for
                 for (unsigned n = 0; n < N; ++n) {
                     auto &nhood = nhoods[n];
                     Neighbors &pool = nhood.pool;
-                    GenRandom(rng, &nhood.nn_new[0], nhood.nn_new.size(), N);
-                    GenRandom(rng, &random[0], random.size(), N);
+                    GenRandom(rngs[thread_id], &nhood.nn_new[0], nhood.nn_new.size(), N);
+                    GenRandom(rngs[thread_id], &random[0], random.size(), N);
                     nhood.L = params.S;
                     nhood.M = params.S;
                     unsigned i = 0;
