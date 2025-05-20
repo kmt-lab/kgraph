@@ -878,15 +878,17 @@ namespace kgraph {
                 auto &nn_old = nhoods[i].nn_old;
                 auto &rnn_new = nhoods[i].rnn_new;
                 auto &rnn_old = nhoods[i].rnn_old;
+                static thread_local mt19937 shuffle_rng(params.seed+1);
                 if (params.R && (rnn_new.size() > params.R)) {
                     //random_shuffle(rnn_new.begin(), rnn_new.end());
-                    static thread_local mt19937 shuffle_rng(params.seed);
                     shuffle(rnn_new.begin(), rnn_new.end(), shuffle_rng);
                     rnn_new.resize(params.R);
                 }
                 nn_new.insert(nn_new.end(), rnn_new.begin(), rnn_new.end());
                 if (params.R && (rnn_old.size() > params.R)) {
-                    random_shuffle(rnn_old.begin(), rnn_old.end());
+                    //random_shuffle(rnn_old.begin(), rnn_old.end());
+                    shuffle(rnn_old.begin(), rnn_old.end(), shuffle_rng);
+                    rnn_new.resize(params.R);
                     rnn_old.resize(params.R);
                 }
                 nn_old.insert(nn_old.end(), rnn_old.begin(), rnn_old.end());
