@@ -693,7 +693,7 @@ namespace kgraph {
             }
             {
                 cerr << "Reranking edges..." << endl;
-#pragma omp parallel for
+//#pragma omp parallel for
                 for (unsigned i = 0; i < graph.size(); ++i) {
                     auto &v = graph[i];
                     std::sort(v.begin(), v.end());

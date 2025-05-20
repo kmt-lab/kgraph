@@ -111,10 +111,10 @@ int main (int argc, char *argv[]) {
         boost::progress_display progress(query.size(), cerr);
         {   // to ensure auto_cpu_timer destruct before "time" computation
             boost::timer::auto_cpu_timer timer;
-#pragma omp parallel for
+//#pragma omp parallel for
             for (unsigned i = 0; i < query.size(); ++i) {
                 oracle.query(query[i]).search(K, default_epsilon, result[i]);
-#pragma omp critical
+//#pragma omp critical
                 ++progress;
             }
             time = timer.elapsed().wall / 1e9;
@@ -136,11 +136,11 @@ int main (int argc, char *argv[]) {
         boost::progress_display progress(query.size(), cerr);
         {
             boost::timer::auto_cpu_timer timer;
-#pragma omp parallel for reduction(+:cost)
+///#pragma omp parallel for reduction(+:cost)
             for (unsigned i = 0; i < query.size(); ++i) {
                 KGraph::SearchInfo info;
                 kgraph->search(oracle.query(query[i]), params, result[i], &info);
-#pragma omp critical
+//#pragma omp critical
                 ++progress;
                 cost += info.cost;
             }
@@ -160,7 +160,7 @@ int main (int argc, char *argv[]) {
         BOOST_VERIFY(gs.size() >= query.size());
         kgraph::Matrix<float> gs_dist(query.size(), K);
         kgraph::Matrix<float> result_dist(query.size(), K);
-#pragma omp parallel for
+//#pragma omp parallel for
         for (unsigned i = 0; i < query.size(); ++i) {
             auto Q = oracle.query(query[i]);
             float *gs_dist_row = gs_dist[i];
