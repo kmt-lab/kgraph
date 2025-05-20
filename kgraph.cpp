@@ -843,7 +843,8 @@ namespace kgraph {
                 nhood.radius = nhood.pool.back().dist;
             }
             //!!! compute radius2
-#pragma omp parallel for
+// 2025.05.20 Commented out for deterministic behavior
+//#pragma omp parallel for
             for (unsigned n = 0; n < N; ++n) {
                 auto &nhood = nhoods[n];
                 if (nhood.found) {
@@ -859,7 +860,8 @@ namespace kgraph {
                 BOOST_VERIFY(nhood.M > 0);
                 nhood.radiusM = nhood.pool[nhood.M-1].dist;
             }
-#pragma omp parallel for schedule(static)
+// 2025.05.20 Commented out for deterministic behavior
+//#pragma omp parallel for schedule(static)
             for (unsigned n = 0; n < N; ++n) {
                 auto &nhood = nhoods[n];
                 auto &nn_new = nhood.nn_new;
