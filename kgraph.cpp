@@ -2,7 +2,7 @@
 #define KGRAPH_VERSION unknown
 #endif
 #ifndef KGRAPH_BUILD_NUMBER
-#define KGRAPH_BUILD_NUMBER 
+#define KGRAPH_BUILD_NUMBER
 #endif
 #ifndef KGRAPH_BUILD_ID
 #define KGRAPH_BUILD_ID
@@ -792,9 +792,9 @@ namespace kgraph {
 //#pragma omp for schedule(static)
                 for (unsigned n = 0; n < N; ++n) {
                     int thread_id = 0;
-#ifdef _OPENMP
-                    thread_id = omp_get_thread_num();
-#endif
+//#ifdef _OPENMP
+//                    thread_id = omp_get_thread_num();
+//#endif
                     auto &nhood = nhoods[n];
                     Neighbors &pool = nhood.pool;
                     GenRandom(rngs[thread_id], &nhood.nn_new[0], nhood.nn_new.size(), N);
@@ -922,11 +922,11 @@ public:
             }
             if (N <= params.L) {
                 cerr << "Warning: small dataset, shrinking L to " << (N-1) << "." << endl;
-                params.L = N - 1; 
+                params.L = N - 1;
             }
             if (N <= params.S) {
                 cerr << "Warning: small dataset, shrinking S to " << (N-1) << "." << endl;
-                params.S = N - 1; 
+                params.S = N - 1;
             }
 
             vector<Control> controls;
