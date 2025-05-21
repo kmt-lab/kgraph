@@ -114,7 +114,7 @@ public:
             }
         }
     }
-    
+
     void load (const std::string &path, unsigned dim, unsigned skip = 0, unsigned gap = 0) {
         std::ifstream is(path.c_str(), std::ios::binary);
         if (!is) throw io_error(path);
